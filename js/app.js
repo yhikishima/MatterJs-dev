@@ -18,6 +18,7 @@
 
 
   var STAGE = {};
+  var _engine = {};
 
   STAGE.init = function() {
     var opt = {
@@ -31,7 +32,42 @@
 
      //Engine 実行
      Engine.run(_engine);
-     // STAGE.ballSample();
+     STAGE.ballSample();
+  };
+
+  STAGE.ballSample = function() {
+    var _world = _engine.world;
+    STAGE.reset();
+
+    var ball = Bodies.circle(530, 100, 50, {
+      render: {fillStyle: '#d04030'}
+    });
+
+    World.add(_world, [ball]);
+  };
+
+  STAGE.reset = function () {
+    var _world = _engine.world;
+
+    //描画クリア
+    World.clear(_world);
+    Engine.clear(_engine);
+
+    //重力値
+    _engine.world.gravity.y = 1;
+
+    var offset = 0;
+
+    //矩形で枠線を作る(rectangle(x座標,y座標,横幅,縦幅,option))
+    World.add(_world, [
+        Bodies.rectangle(400, 0, 800, 1, {isStatic: true}),
+        Bodies.rectangle(800, 300, 1, 600, {isStatic: true}),
+        Bodies.rectangle(0, 0, 1, 600, {isStatic: true}),
+        Bodies.rectangle(400, 600, 800, 1, {isStatic: true})
+    ]);
+    //renderのオプション(各種renderのオプション)
+    var renderOptions = _engine.render.options;
+    renderOptions.wireframes = false;
   };
 
   // 初期化
