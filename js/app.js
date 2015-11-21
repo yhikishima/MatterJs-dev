@@ -14,11 +14,13 @@
       Bounds = Matter.Bounds,
       Vector = Matter.Vector,
       Vertices = Matter.Vertices,
+      Mouse = Matter.Mouse,
       MouseConstraint = Matter.MouseConstraint;
 
-
   var STAGE = {};
+  var BALL = {};
   var _engine = {};
+  var _ball = {};
 
   STAGE.init = function() {
     var opt = {
@@ -29,25 +31,18 @@
 
     var mainStage = document.getElementById('stage');
     _engine = Engine.create(mainStage, opt);
+    var _world = _engine.world;
 
     //Engine 実行
     Engine.run(_engine);
-    STAGE.createBall();
-  };
-
-  STAGE.createBall = function() {
-    var _world = _engine.world;
     STAGE.reset();
 
-    var ball = Bodies.circle(530, 100, 50, {
-      isStatic: false, // true -> ボールを固定
-      //バウンドさせたい場合はrestitutionに任意の値を渡す
-      restitution: 0.9,
-      render: {fillStyle: '#d04030'}
-    });
+    _ball = BALL.create();
+    World.add(_world, [_ball]);
 
-    World.add(_world, [ball]);
+    BALL.addEvent();
   };
+
 
   STAGE.reset = function () {
     var _world = _engine.world;
@@ -71,6 +66,36 @@
     //renderのオプション(各種renderのオプション)
     var renderOptions = _engine.render.options;
     renderOptions.wireframes = false;
+  };
+
+  /**
+  * BALL methods
+  */
+  BALL.create = function(e) {
+    var x = (e)? e.mouse.position.x : 530;
+    var y = (e)? e.mouse.position.y : 100;
+
+    var ball = Bodies.circle(x, y, 50, {
+      isStatic: false, // true -> ボールを固定
+      //バウンドさせたい場合はrestitutionに任意の値を渡す
+      restitution: 0.9,
+      render: {fillStyle: '#d04030'}
+    });
+
+    return ball;
+  };
+
+  BALL.addEvent = function() {
+    Events.on(_engine, 'mousedown', function(e) {
+      _ball = BALL.create(e);
+      World.add(_engine.world, [_ball]);
+
+      var button = document.getElementById('button-firing');
+
+      button.addEventListener('click', function(e){
+        Body.applyForce(_ball, { x: 0, y: 0 }, {x: 0.06, y: -0.05});
+      });
+    });
   };
 
   // 初期化
