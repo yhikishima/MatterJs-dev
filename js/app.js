@@ -28,18 +28,21 @@
     };
 
     var mainStage = document.getElementById('stage');
-     _engine = Engine.create(mainStage, opt);
+    _engine = Engine.create(mainStage, opt);
 
-     //Engine 実行
-     Engine.run(_engine);
-     STAGE.ballSample();
+    //Engine 実行
+    Engine.run(_engine);
+    STAGE.createBall();
   };
 
-  STAGE.ballSample = function() {
+  STAGE.createBall = function() {
     var _world = _engine.world;
     STAGE.reset();
 
     var ball = Bodies.circle(530, 100, 50, {
+      isStatic: false, // true -> ボールを固定
+      //バウンドさせたい場合はrestitutionに任意の値を渡す
+      restitution: 0.9,
       render: {fillStyle: '#d04030'}
     });
 
